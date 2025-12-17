@@ -1,0 +1,542 @@
+:root {
+  --bg-dark:#0f0f10;
+  --panel-dark:#1c1c1f;
+  --card-dark:#27272a;
+  --text-primary:#e5e7eb;
+  --text-secondary:#9ca3af;
+  --accent:#0078ff;
+  --bot-border:#10a37f;
+  --bot-text:#065f46;
+  --border-dark:#2a2a2e;
+}
+
+/* -------------------- BODY -------------------- */
+body {
+  margin:0; height:100vh; display:flex;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg-dark); color: var(--text-primary);
+  transition:0.2s;
+  line-height: 1.6;
+}
+
+/* -------------------- SIDEBAR -------------------- */
+#sidebar {
+  width:260px; background: var(--panel-dark);
+  border-right:1px solid var(--border-dark);
+  display:flex; flex-direction:column;
+  padding:14px; box-sizing:border-box;
+  transition:0.2s;
+  position: relative;
+  z-index: 100;
+}
+#sidebar.hidden { 
+  margin-left: -260px; 
+  display: none; 
+}
+
+#sidebar-toggle {
+  position: absolute;
+  top: 14px; left: 14px;
+  z-index: 50;
+  background: var(--card-dark);
+  border: 1px solid var(--border-dark);
+  color: var(--text-primary);
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: none; 
+}
+#sidebar.hidden + #sidebar-toggle {
+  display: block;
+}
+
+#sidebar-close {
+  background: transparent; border: none; color: var(--text-secondary);
+  font-size: 20px; cursor: pointer;
+}
+
+.sidebar-header {
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:20px; margin-bottom:16px;
+}
+
+#new-chat-btn, #new-proj-btn {
+  margin-bottom:6px; padding:6px 10px; border-radius:8px;
+  border:none; background: var(--card-dark); color: var(--accent);
+  cursor:pointer; text-align:left; font-size:12px; line-height: 18px;
+}
+#new-chat-btn:hover, #new-proj-btn:hover { opacity:0.9; }
+
+.sidebar-nav { overflow-y: auto; flex: 1; }
+.sidebar-nav h3 {
+  margin:12px 0 8px; color: var(--text-secondary); font-size:12px; text-transform: uppercase; letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.55), 0 1px 1px rgba(0,0,0,0.6);
+}
+.sidebar-nav ul { list-style:none; padding:0; margin:0; }
+.sidebar-nav li {
+  padding:4px 8px; margin-bottom:2px;
+  border-radius:6px; cursor:pointer;
+  color: var(--text-primary);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  display: block; position: relative;
+  font-size: 12px;
+  height: 24px; line-height: 24px;
+}
+.sidebar-nav li span {
+  display: block;
+  width: calc(100% - 40px);
+  overflow: hidden; text-overflow: ellipsis;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.55), 0 1px 1px rgba(0,0,0,0.6);
+}
+.sidebar-nav li:hover { background: var(--card-dark); }
+
+.sidebar-nav li.active { 
+  background: var(--accent) !important; 
+  color: white !important; 
+  font-weight: 500;
+}
+.sidebar-nav li.active:hover { 
+  background: var(--accent) !important; 
+}
+
+/* Item actions in sidebar - Floating */
+.item-actions { 
+  display: flex; gap:4px; 
+  position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+  background: inherit; /* Matches parent bg so it covers text if needed */
+  padding-left: 4px;
+  opacity: 0; transition: opacity 0.2s;
+}
+.sidebar-nav li:hover .item-actions { opacity: 1; }
+.sidebar-nav li.active .item-actions { opacity: 1; } /* Always show on active if desired, or keep hover */
+
+.item-actions button {
+  background: none; border: none; cursor: pointer; font-size: 12px; padding: 2px;
+  color: var(--text-secondary); opacity: 0.8; transition: 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.item-actions button:hover { opacity: 1; color: var(--text-primary); transform: scale(1.1); }
+
+.sidebar-nav li.active .item-actions button { color: rgba(255,255,255, 0.8); }
+.sidebar-nav li.active .item-actions button:hover { color: white; }
+
+
+#proj-toggle-icon, #chat-toggle-icon {
+  font-size: 12px; color: var(--text-secondary); transition: 0.2s;
+}
+#proj-toggle-icon:hover, #chat-toggle-icon:hover { color: var(--accent); }
+
+/* -------------------- CHAT -------------------- */
+#chat { flex:1; display:flex; flex-direction:column; width: 100%; position: relative; }
+
+.topbar {
+  padding:12px 16px; background: var(--panel-dark);        
+  border-bottom:1px solid var(--border-dark);
+  display:flex; justify-content:flex-end; align-items: center; gap:8px;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+.icon-btn:hover {
+  background: var(--card-dark);
+  color: var(--text-primary);
+}
+
+/* Theme Switch Pill */
+.theme-switch {
+  width: 52px; height: 26px;
+  background: var(--card-dark);
+  border: 1px solid var(--border-dark);
+  border-radius: 99px;
+  position: relative;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 4px;
+  box-sizing: border-box;
+}
+.switch-track {
+  width: 100%; display: flex; justify-content: space-between; align-items: center;
+  pointer-events: none; z-index: 1;
+}
+.switch-track svg {
+  color: var(--text-secondary);
+  transition: 0.2s;
+}
+.switch-thumb {
+  position: absolute; left: 2px; top: 2px;
+  width: 20px; height: 20px;
+  background: var(--text-secondary);
+  border-radius: 50%;
+  transition: 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  z-index: 2;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* Light Mode Logic for Switch */
+body.light .theme-switch {
+  background: #e5e7eb;
+  border-color: #d1d5db;
+}
+body.light .switch-thumb {
+  transform: translateX(28px); /* Move right */
+  background: #fff;
+}
+body.light .icon-sun { color: #f59e0b; opacity: 1; }
+body.light .icon-moon { color: #9ca3af; opacity: 0.5; }
+
+body:not(.light) .switch-thumb {
+  background: #4b5563;
+}
+body:not(.light) .icon-sun { opacity: 0.5; }
+body:not(.light) .icon-moon { color: #a78bfa; opacity: 1; }
+
+
+/* -------------------- MENSAGENS -------------------- */
+.messages {
+  flex:1; padding:20px 40px 20px 20px; overflow-y:auto;
+  display:flex; flex-direction:column; gap:20px;
+}
+
+.message {
+  max-width:700px; width:100%; margin:0 auto;
+  padding:10px 14px; border-radius:10px;
+  background: var(--card-dark);
+  color: var(--text-primary);
+  border:1px solid var(--border-dark);
+  animation: fadeIn 0.2s ease-in;
+  font-size: 14px;
+  position: relative; overflow: visible;
+}
+
+/* Ensure code blocks have specific background if Dracula doesn't override fully or for padding */
+.message pre {
+  background: #282a36 !important; /* Dracula Background Always */
+  color: #f8f8f2;     /* Dracula Foreground Default */
+  padding: 12px; 
+  border-radius: 8px; 
+  overflow-x: auto;
+  border: 1px solid #44475a; /* Dracula Selection/Border */
+  position: relative; 
+  margin: 10px 0;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+.message code {
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 0.9em;
+}
+/* Inline code */
+.message p > code, .message li > code {
+   background: #282a36;
+   padding: 2px 4px;
+   border-radius: 4px;
+   color: #ff79c6; 
+   border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* -------------------- DRACULA SYNTAX HIGHLIGHTING -------------------- */
+/* Dracula Theme v1.2.5 - Official */
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  background: #282a36;
+  color: #f8f8f2;
+}
+
+.hljs-built_in,
+.hljs-selector-tag,
+.hljs-section,
+.hljs-link {
+  color: #8be9fd;
+}
+
+.hljs-keyword {
+  color: #ff79c6;
+}
+
+.hljs-attribute,
+.hljs-meta,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition,
+.hljs-variable,
+.hljs-template-tag,
+.hljs-template-variable {
+  color: #f1fa8c;
+}
+
+.hljs-comment,
+.hljs-quote,
+.hljs-deletion {
+  color: #6272a4;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-title,
+.hljs-section,
+.hljs-doctag,
+.hljs-type,
+.hljs-name,
+.hljs-strong {
+  font-weight: bold;
+}
+
+.hljs-literal,
+.hljs-number {
+  color: #bd93f9;
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-type,
+.hljs-name {
+  color: #50fa7b;
+}
+
+.hljs-variable,
+.hljs-attribute {
+  color: #50fa7b;
+}
+
+.hljs-string,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-strong {
+  color: #f1fa8c;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+/* End Dracula Theme */
+
+
+/* Code Copy Button */
+.code-copy-btn {
+  position: absolute; top: 6px; right: 6px;
+  background: rgba(255,255,255,0.2); 
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #f8f8f2;
+  cursor: pointer; padding: 4px 8px; border-radius: 4px;
+  opacity: 0.7; transition: 0.2s;
+  font-size: 14px;
+  z-index: 100;
+}
+.message pre:hover .code-copy-btn { opacity: 1; }
+.code-copy-btn:hover { background: rgba(255,255,255,0.4); opacity: 1; }
+
+/* Typography Improvements */
+.message h1, .message h2, .message h3 { margin-top: 0; color: #fff; font-weight: 600; }
+body.light .message h1, body.light .message h2, body.light .message h3 { color: #000; }
+
+.message h1 { font-size: 1.5em; border-bottom: 1px solid var(--border-dark); padding-bottom: 0.3em; }
+.message h2 { font-size: 1.3em; }
+.message h3 { font-size: 1.1em; }
+
+
+.message.user { 
+  border-color: var(--accent); 
+  color: #a0a0a0; 
+  text-align:right; 
+}
+
+.message.bot { 
+  border-color: var(--bot-border); 
+  color: #ffffff; 
+  text-align:left; 
+}
+
+/* Light Theme Overrides */
+body.light {
+  --bg-dark: #ffffff;
+  --panel-dark: #f3f4f6;
+  --card-dark: #ffffff;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --border-dark: #e5e7eb;
+}
+body.light .message.bot { color: #000000; }
+body.light .message.user { color: #4b5563; }
+
+
+/* -------------------- MSG ACTIONS -------------------- */
+.msg-actions {
+  display: flex; gap: 8px; margin-top: 8px; opacity: 0.6; transition: 0.2s;
+}
+.message:hover .msg-actions { opacity: 1; }
+
+.msg-actions button {
+  background: transparent; border: none;
+  color: var(--text-secondary); cursor: pointer;
+  padding: 4px; border-radius: 4px; font-size: 16px;
+}
+.msg-actions button:hover {
+  background: rgba(128,128,128,0.1); color: var(--text-primary);
+}
+
+.message.user .msg-actions {
+  position: absolute; right: -32px; top: 50%; transform: translateY(-50%);
+  flex-direction: column; justify-content: center; margin: 0;
+}
+.message.user .msg-actions button { font-size: 12px; padding: 2px; }
+.message.bot .msg-actions { justify-content: flex-start; }
+
+/* Layout Flipped */
+.layout-flipped .message.user { text-align: left; }
+.layout-flipped .message.bot { text-align: right; }
+
+.layout-flipped .message.user .msg-actions { justify-content: flex-start; }
+.layout-flipped .message.bot .msg-actions { justify-content: flex-end; }
+
+
+/* -------------------- SETTINGS & PERSONA -------------------- */
+.persona-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;
+}
+.persona-grid label {
+  display: flex; align-items: center; gap: 6px;
+  cursor: pointer; padding: 4px; border-radius: 4px;
+}
+.persona-grid label:hover { background: var(--card-dark); }
+
+/* -------------------- PROMPT -------------------- */
+.prompt {
+  display:flex; gap:8px; align-items:center; padding:12px 16px;
+  border-top:1px solid var(--border-dark);
+  background: var(--panel-dark);
+}
+.prompt textarea {
+  flex:1; padding:8px 12px; border-radius:20px; border:1px solid var(--border-dark);
+  background: var(--card-dark); color: var(--text-primary); outline:none;
+  resize: none; font-family: inherit; min-height: 38px; height: 38px;
+}
+.prompt button {
+  padding:10px 16px; border-radius:999px; border:1px solid var(--border-dark);
+  background: var(--accent); color: var(--bg-dark); cursor:pointer;
+}
+.prompt select {
+  padding:10px 12px; border-radius:8px; border:1px solid var(--border-dark);
+  background: var(--card-dark); color: var(--text-primary);
+}
+
+/* -------------------- MODAL -------------------- */
+.modal { position:fixed; top:80px; right:20px; z-index:50; }
+.modal .content { background: var(--panel-dark); border:1px solid var(--border-dark); color: var(--text-primary); padding:14px; border-radius:12px; width:300px; }
+.modal .content h3 { margin:0 0 10px; }
+.modal .content button { padding:8px 12px; border-radius:8px; border:1px solid var(--border-dark); background: var(--card-dark); color: var(--text-primary); cursor:pointer; }
+.modal .content label { display:block; margin:8px 0 4px; }
+.modal .content select, .modal .content textarea { display:block; width:100%; margin-bottom:10px; }
+.modal .content input[type="text"] { display:block; width:100%; }
+
+/* -------------------- LOGIN MODAL BUTTONS -------------------- */
+#googleBtn {
+  min-width: 250px;
+  min-height: 44px; 
+  margin-bottom: 5px;
+  display: block; 
+}
+
+#appleid-signin {
+  min-width: 250px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* -------------------- ANIMAÇÕES -------------------- */
+@keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+.spinner {
+  margin:0 auto; padding:10px; text-align:center;
+  font-size:13px; opacity:0.7; animation:pulse 1s infinite;
+}
+@keyframes pulse{ 0%{opacity:0.4} 50%{opacity:1} 100%{opacity:0.4} }
+
+/* -------------------- MOBILE / RESPONSIVE -------------------- */
+@media (max-width: 768px) {
+  body {
+    flex-direction: column; /* Or just keep flex, but adjust sidebar */
+    position: relative;
+    overflow: hidden; /* Prevent body scroll if sidebar pushes */
+  }
+
+  #sidebar {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 280px;
+    z-index: 1000;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.5);
+    transform: translateX(0);
+    transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+  
+  #sidebar.hidden {
+    transform: translateX(-100%);
+    margin-left: 0; /* Reset desktop margin logic */
+    display: flex; /* Keep it flex but transformed out */
+  }
+
+  /* When sidebar is hidden (default on mobile usually?), show toggle */
+  #sidebar-toggle {
+    display: block;
+    top: 10px; left: 10px;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    padding: 4px;
+  }
+  
+  /* Adjust chat area */
+  #chat {
+    width: 100%;
+    height: 100vh;
+  }
+  
+  .topbar {
+    padding: 10px;
+  }
+  
+  .messages {
+    padding: 10px 10px 20px 10px;
+  }
+  
+  .message {
+    padding: 10px;
+    font-size: 14px;
+  }
+  
+  /* Prompt area on mobile */
+  .prompt {
+    padding: 8px;
+    flex-wrap: wrap; /* Allow wrap if needed, though row is usually fine */
+  }
+  .prompt textarea {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  .prompt button {
+    padding: 8px 14px;
+  }
+  .prompt select {
+    max-width: 80px; /* Compress model selector */
+  }
+  
+  /* Modal centering on mobile */
+  .modal {
+    top: 50%; left: 50%; right: auto;
+    transform: translate(-50%, -50%);
+    width: 90%; max-width: 320px;
+  }
+  .modal .content { width: 100%; box-sizing: border-box; }
+}

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Mini Ollama Chat</title>
+<link rel="stylesheet" href="style.css?v=5">
+</head>
+<body>
+
+<aside id="sidebar" class="is-open">
+  <div class="sidebar-header">
+    <span class="logo">🦙 Mini Ollama</span>
+    <!-- Close button for mobile or explicit close -->
+    <button id="sidebar-close" onclick="toggleSidebar()">×</button>
+  </div>
+
+  <button id="new-chat-btn" onclick="newChat()">+ Novo Chat</button>
+  <button id="new-proj-btn" onclick="newProject()">+ Novo Projeto</button>
+
+  <nav class="sidebar-nav">
+    <div style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="toggleProjects()">
+        <h3>Projetos</h3>
+        <span id="proj-toggle-icon">▼</span>
+    </div>
+    <ul id="project-list"></ul>
+    
+    <div style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="toggleConversations()">
+        <h3>Conversas</h3>
+        <span id="chat-toggle-icon">▼</span>
+    </div>
+    <ul id="convo-list"></ul>
+  </nav>
+</aside>
+
+<!-- Hamburger button (visible when sidebar hidden) -->
+<button id="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+<div id="chat">
+<div class="topbar">
+    <div id="ollama-status" title="Verificando conexão...">🔴 Offline</div>
+    
+    <!-- Theme Toggle Switch -->
+    <div class="theme-switch" onclick="toggleTheme()" title="Alternar Tema">
+        <div class="switch-track">
+            <svg class="icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+            <svg class="icon-sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+        </div>
+        <div class="switch-thumb"></div>
+    </div>
+
+    <button onclick="openSettings()" class="icon-btn" title="Configurações">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+        </svg>
+    </button>
+    <div id="auth-area" style="display:flex; gap:8px; align-items:center;">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+
+  <div id="messages" class="messages"></div>
+
+  <div class="prompt">
+    <textarea id="input" placeholder="Digite sua dúvida..." rows="1"></textarea>
+    <button onclick="sendMessage()">Enviar</button>
+    <select id="model">
+      <option value="llama3.2:3b">llama3.2:3b</option>
+      <option value="phi3">phi3</option>
+      <option value="mistral">mistral</option>
+    </select>
+  </div>
+</div>
+
+<!-- Login Modal -->
+<div id="login-modal" class="modal" style="display:none;">
+  <div class="content" style="position:relative;">
+    <button onclick="closeLogin()" style="position:absolute; top:10px; right:10px; background:transparent; border:none; font-size:18px; cursor:pointer; color:var(--text-secondary);">×</button>
+    <h3>Entrar / Criar Conta</h3>
+    <p style="font-size:12px; text-align:center; opacity:0.8; margin-bottom:12px;">Use sua conta Google ou Apple para entrar ou criar um novo cadastro automaticamente.</p>
+    
+    <div style="display:flex; flex-direction:column; gap:10px; align-items:center; margin-top:20px; width:100%;">
+        
+        <!-- Local Login Form -->
+        <div id="local-login-form" style="width:100%; display:flex; flex-direction:column; gap:10px;">
+            <input type="text" id="login-email" placeholder="Email" style="padding:10px; border-radius:6px; border:1px solid var(--border-dark); background:var(--card-dark); color:var(--text-primary);">
+            <input type="password" id="login-password" placeholder="Senha" style="padding:10px; border-radius:6px; border:1px solid var(--border-dark); background:var(--card-dark); color:var(--text-primary);">
+            
+            <div style="display:flex; gap:10px;">
+                <button onclick="localLogin()" style="flex:1; padding:10px; border-radius:6px; border:none; background:var(--accent); color:white; cursor:pointer;">Entrar</button>
+                <button onclick="localRegister()" style="flex:1; padding:10px; border-radius:6px; border:1px solid var(--border-dark); background:transparent; color:var(--text-primary); cursor:pointer;">Cadastrar</button>
+            </div>
+            <div id="login-msg" style="text-align:center; font-size:12px; color:#e91e63;"></div>
+        </div>
+
+        <div style="width:100%; text-align:center; border-bottom:1px solid var(--border-dark); line-height:0.1em; margin:10px 0 20px;"> 
+            <span style="background:var(--panel-dark); padding:0 10px; color:var(--text-secondary); font-size:12px;">OU</span> 
+        </div>
+
+        <!-- Google Wrapper -->
+        <div id="googleBtn" style="min-width:250px; min-height:40px; display:block;"></div>
+        
+        <!-- Apple Button -->
+        <div id="appleid-signin" style="min-width:250px; height:40px; cursor:pointer; background:black; color:white; border-radius:20px; display:flex; align-items:center; justify-content:center; gap:10px; font-family:-apple-system, sans-serif; font-weight:500;">
+            <svg viewBox="0 0 384 512" width="16" height="16" fill="white"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 46.9 126.7 89.8 126.7 22.3 0 31.8-15.6 59-15.6 28 0 36.3 15.6 59 15.6 30 0 65.5-84.6 77.3-122.1-49.2-16.6-64.5-54.7-64.8-90.6zM271 83c16.9-20.7 30.2-51.7 25.4-83-29.3 2.1-59.6 19.3-77 41.5-16 19.8-29.2 49.3-25.2 79.5 32.3 3.6 59.8-18.4 76.8-38z"/></svg>
+            Sign in with Apple
+        </div>
+    </div>
+
+    <div id="googleHint" style="font-size:12px; opacity:0.7; text-align:center;"></div>
+  </div>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</div>
+
+<!-- Settings Modal -->
+<div id="settings-modal" class="modal" style="display:none;">
+  <div class="content" style="width:400px; max-height:80vh; overflow-y:auto;">
+    <h3>Configurações</h3>
+    
+    <label>Idioma Padrão</label>
+    <select id="cfg-lang">
+        <option value="pt">Português</option>
+        <option value="en">Inglês</option>
+    </select>
+
+    <label>Visualização</label>
+    <select id="cfg-layout">
+        <option value="normal">Normal (Eu: Direita, IA: Esquerda)</option>
+        <option value="flipped">Invertido (Eu: Esquerda, IA: Direita)</option>
+    </select>
+    
+    <label>Cor do Tema</label>
+    <select id="cfg-accent">
+        <option value="#0078ff">Azul</option>
+        <option value="#ff8c00">Laranja</option>
+        <option value="#10a37f">Verde</option>
+        <option value="#e91e63">Rosa</option>
+        <option value="#8b5cf6">Roxo</option>
+    </select>
+    
+    <label>Aprendizado Contínuo</label>
+    <div style="margin-bottom:12px; display:flex; gap:8px; align-items:center;">
+        <input type="checkbox" id="cfg-learning"> 
+        <span style="font-size:12px; color:var(--text-secondary);">Analisar conversas para aprender sobre mim</span>
+    </div>
+
+    <label>Personalidade (Misturar)</label>
+    <div class="persona-grid">
+        <label><input type="checkbox" value="serious" class="persona-chk"> Séria</label>
+        <label><input type="checkbox" value="fun" class="persona-chk"> Divertida</label>
+        <label><input type="checkbox" value="gossipy" class="persona-chk"> Fofoqueira</label>
+        <label><input type="checkbox" value="teacher" class="persona-chk"> Professor</label>
+        <label><input type="checkbox" value="objective" class="persona-chk"> Objetiva</label>
+        <label><input type="checkbox" value="welcoming" class="persona-chk"> Acolhedora</label>
+        <label><input type="checkbox" value="enthusiastic" class="persona-chk"> Entusiasmada</label>
+        <label><input type="checkbox" value="sarcastic" class="persona-chk"> Sarcástica</label>
+        <label><input type="checkbox" value="default" class="persona-chk"> Padrão</label>
+        <label><input type="checkbox" id="chk-custom-persona" onchange="toggleCustomArea()"> Personalizado</label>
+    </div>
+    
+    <div id="custom-persona-area" style="display:none; margin-top:8px;">
+        <label>Defina sua personalidade/instruções:</label>
+        <textarea id="cfg-custom" rows="4" placeholder="Ex: Aja como um especialista em JS..."></textarea>
+    </div>
+    
+    <hr style="border:0; border-top:1px solid var(--border-dark); margin:16px 0;">
+    
+    <label>Google Client ID (Login)</label>
+    <input id="cfg-google-id" type="text" placeholder="Cole seu Client ID aqui..." style="width:100%; padding:8px; border-radius:6px; border:1px solid var(--border-dark); background:var(--card-dark); color:var(--text-primary); margin-bottom:4px;">
+    <small style="color:var(--text-secondary); display:block; margin-bottom:8px;">
+        Deixe em branco para desativar o botão do Google.<br>
+        Necessário criar um projeto no <a href="https://console.cloud.google.com/apis/credentials" target="_blank" style="color:var(--accent);">Google Cloud Console</a>.
+        <br><br>
+        <span style="color:#e91e63;">⚠️ Se vir o erro <b>"401: invalid_client"</b> ou <b>"no registered origin"</b>:</span>
+        <br>
+        Adicione <code>http://localhost:3000</code> (ou a porta que estiver usando) em <b>"Origens JavaScript autorizadas"</b> no Console do Google.
+    </small>
+    
+    <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px;">
+      <button onclick="saveSettings()">Salvar</button>
+      <button onclick="closeSettings()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="app.js?v=8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</body>
+</html>

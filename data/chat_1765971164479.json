@@ -1,0 +1,14 @@
+{
+  "messages": [
+    {
+      "who": "user",
+      "text": "Fale sobre dislexia."
+    },
+    {
+      "who": "bot",
+      "text": "Olá! Vamos falar sobre dislexia.\n\nA dislexia é uma condição que afeta como lemos e escrevemos as palavras. É um desafio cognitivo que pode ser muito difícil de superar, mas não é impossível.\n\nQuando alguém tem dislexia, pode ter dificuldade em:\n\n* Ler palavras ou frases\n* Conhecer a grafia correta das palavras\n* Manter a concentração durante longos períodos\n\nMas é importante lembrar que a dislexia não é uma fraqueza ou um problema de inteligência. É apenas uma condição que precisa ser gerenciada com as estratégias certas.\n\nExistem muitas técnicas e ferramentas que podem ajudar as pessoas com dislexia a melhorar suas habilidades leitoras e escritoras. Além disso, muitos recursos educacionais estão disponíveis para apoiar as pessoas com dislexia em seu desenvolvimento.\n\nAqui estão algumas dicas para ajudar as pessoas com dislexia:\n\n* Leia o material várias vezes\n* Use a luz certa para ler (não é necessário usar óculos de leitura)\n* Tente ouvir enquanto lê para melhorar sua compreensão\n* Faça pausas regulares para descansar os olhos\n\nE lembre-se: não há dislexia sem inteligência. É importante encontrar as estratégias certas para superar desafios e alcançar seus objetivos.\n\nAgora, é sua vez! Qual é o seu objetivo em relação à dislexia? Você tem alguma experiência pessoal com a condição? Vamos conversar sobre isso!"
+    }
+  ],
+  "type": "chat",
+  "title": "O que é Dislexia?"
+}

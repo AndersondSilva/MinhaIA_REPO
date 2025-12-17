@@ -1,0 +1,14 @@
+{
+  "messages": [
+    {
+      "who": "user",
+      "text": "O que é DNS?"
+    },
+    {
+      "who": "bot",
+      "text": "Vamos falar sobre o DNS!\n\nO DNS, ou Dominio de Nível Superior, é uma camada do sistema de nomes na internet. Ele é responsável por traduzir nomes de domínios (como \"google.com\") em endereços IP (como 216.58.194.174).\n\nImagine que você está procurando um site no Google, mas não sabe o IP correspondente. O DNS entra em ação, procura a informação no seu servidor e retorna o IP correto para que você possa acessar o site.\n\nExistem dois tipos de DNS: o DNS do provedor de internet (por exemplo, o DNS da sua empresa) e o DNS público (como o da Google).\n\nO DNS é fundamental para que os nossos navegadores possam funcionar corretamente na internet. É como um grande diretório que ajuda a encontrar informações em um formato mais fácil de entender.\n\nE agora, eu quero saber: você tem alguma dúvida sobre o DNS?"
+    }
+  ],
+  "type": "chat",
+  "title": "Quê é o DNS?"
+}
